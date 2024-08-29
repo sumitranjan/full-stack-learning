@@ -1,0 +1,16 @@
+{
+  "name": "4.2-http-server-intro-to-express",
+  "version": "1.0.0",
+  "description": "Basic HTTP Server using express",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
