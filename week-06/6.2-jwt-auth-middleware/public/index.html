@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth website</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+
+
+</head>
+
+<body>
+    <div id="root">
+        <!-- <div>
+            Signup
+            <input type="text" name="username" id="signup-username" placeholder="Username">
+            <input type="text" name="password" id="signup-password" placeholder="Password">
+            <button onclick="signup()">Submit</button>
+        </div> -->
+        <!-- <div>
+                Signin
+                <input type="text" name="username" id="signin-username" placeholder="Username">
+                <input type="text" name="password" id="signin-password" placeholder="Password">
+                <button onclick="signin()">Submit</button>
+            </div> -->
+        <div>
+
+            <div id="information"></div>
+        </div>
+        <div>
+            <!-- <button onclick="logout()">Logout</button> -->
+        </div>
+    </div>
+
+</body>
+
+<script>
+    async function signup() {
+        const username = document.getElementById("signup-username").value;
+        const password = document.getElementById("signup-password").value;
+
+        await axios.post("http://localhost:3000/signup", {
+            username: username,
+            password: password
+        })
+        alert("You are signed up!");
+    }
+
+    async function signin() {
+        const username = document.getElementById("signin-username").value;
+        const password = document.getElementById("signin-password").value;
+
+        const response = await axios.post("http://localhost:3000/signin", {
+            username: username,
+            password: password
+        })
+        localStorage.setItem("token", response.data.token);
+        console.log("signin response", response)
+        alert("You are signed in");
+        render();
+        getUserInformation()
+    }
+
+    async function getUserInformation() {
+        if (localStorage.getItem("token")) {
+            const response = await axios.get("http://localhost:3000/me", {
+                headers: {
+                    token: localStorage.getItem("token")
+                }
+            })
+            console.log("get user info response :", response)
+
+            const root = document.getElementById("root")
+            const information = document.createElement("p");
+            information.innerHTML = "Username: " + response.data.username + " Password: " + response.data.password;
+
+            root.appendChild(information)
+        }
+    }
+
+
+
+    function logoutHandle() {
+        if (localStorage.getItem("token")) {
+            localStorage.removeItem("token")
+        }
+        render();
+        console.log("Logout")
+    }
+
+    function render() {
+
+        const root = document.getElementById("root");
+        root.innerHTML = "";  // Clear the previous content
+
+        let token = localStorage.getItem("token");
+
+        if (!token) {
+            console.log("render signin/up")
+            const signupUsername = document.createElement("input");
+            signupUsername.type = "text";
+            signupUsername.id = "signup-username"
+            signupUsername.placeholder = "Username";
+
+            const signupPassword = document.createElement("input");
+            signupPassword.type = "text";
+            signupPassword.id = "signup-password"
+            signupPassword.placeholder = "password";
+
+            const signupBtn = document.createElement("button");
+            signupBtn.innerText = "Signup";
+
+            signupBtn.addEventListener("click", () => { console.log("Signup butn clicked:"), signup() })
+
+            const signupContainer = document.createElement("div");
+            signupContainer.append(signupUsername, signupPassword, signupBtn)
+            console.log("signupContainer", signupContainer)
+
+
+            const signInUsername = document.createElement("input");
+            signInUsername.type = "text";
+            signInUsername.id = "signin-username"
+            signInUsername.placeholder = "Username";
+
+            const signInPassword = document.createElement("input");
+            signInPassword.type = "text";
+            signInPassword.id = "signin-password"
+            signInPassword.placeholder = "password";
+
+            const signInBtn = document.createElement("button");
+            signInBtn.innerText = "Signin";
+
+            signInBtn.addEventListener("click", () => { console.log("Signin butn clicked:"), signin() })
+
+            const signInContainer = document.createElement("div");
+            signInContainer.append(signInUsername, signInPassword, signInBtn)
+            console.log("signInContainer", signInContainer)
+
+            // const root = document.getElementById("root")
+
+            console.log("root", root)
+            root.append(signupContainer, signInContainer)
+
+        }
+        else {
+            console.log("render logout")
+
+            const logoutBtn = document.createElement("button");
+            logoutBtn.innerText = "Logout";
+
+            // const root = document.getElementById("root");
+            root.appendChild(logoutBtn)
+            logoutBtn.addEventListener("click", logoutHandle)
+
+        }
+    }
+    render()
+
+    getUserInformation()
+</script>
+
+</html>

@@ -13,6 +13,11 @@ function logger(req, res, next) {
   next();
 }
 
+// localhost:3000
+app.get("/", function (req, res) {
+  res.sendFile(__dirname + "/public/index.html");
+});
+
 app.post("/signup", logger, function (req, res) {
   const username = req.body.username;
   const password = req.body.password;
@@ -78,8 +83,6 @@ function auth(req, res, next) {
 }
 
 app.get("/me", logger, auth, function (req, res) {
-  console.log("ussers:", users);
-  console.log(req.username);
   let foundUser = null;
 
   for (let i = 0; i < users.length; i++) {
